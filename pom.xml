@@ -6,11 +6,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/>
+    </parent>
     <groupId>dev.emanon.banking</groupId>
     <artifactId>banking-platform</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>services/customer-service</module>
+    </modules>
     <name>Banking Platform</name>
     <description>Event-driven banking platform built with Java, Spring Boot and Kafka</description>
 
