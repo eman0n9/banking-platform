@@ -2,12 +2,14 @@ package dev.emanon.banking.customer.application;
 
 import dev.emanon.banking.customer.api.dto.CreateCustomerRequest;
 import dev.emanon.banking.customer.api.dto.CustomerResponse;
+import dev.emanon.banking.customer.application.exception.CustomerNotFoundException;
 import dev.emanon.banking.customer.domain.Customer;
 import dev.emanon.banking.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
@@ -45,6 +47,16 @@ public class CustomerService {
         Customer savedCustomer = customerRepository.save(customer);
 
         return CustomerResponse.from(savedCustomer);
+    }
+
+    @Transactional(readOnly = true)
+    public CustomerResponse getCustomer(UUID customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() ->
+                        new CustomerNotFoundException(customerId)
+                );
+
+        return CustomerResponse.from(customer);
     }
 
     private String normalizePhone(String phone) {
