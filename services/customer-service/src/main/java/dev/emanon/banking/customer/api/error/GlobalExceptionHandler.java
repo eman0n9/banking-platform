@@ -1,5 +1,6 @@
 package dev.emanon.banking.customer.api.error;
 
+import dev.emanon.banking.customer.application.exception.CustomerEmailAlreadyExistsException;
 import dev.emanon.banking.customer.application.exception.CustomerNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,24 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+    @ExceptionHandler(CustomerEmailAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleCustomerEmailAlreadyExists(
+            CustomerEmailAlreadyExistsException exception,
+            HttpServletRequest request
+    ) {
+        ApiError error = new ApiError(
+                Instant.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(error);
     }
 }

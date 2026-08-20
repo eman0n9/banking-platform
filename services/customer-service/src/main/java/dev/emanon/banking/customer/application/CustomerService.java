@@ -2,6 +2,7 @@ package dev.emanon.banking.customer.application;
 
 import dev.emanon.banking.customer.api.dto.CreateCustomerRequest;
 import dev.emanon.banking.customer.api.dto.CustomerResponse;
+import dev.emanon.banking.customer.application.exception.CustomerEmailAlreadyExistsException;
 import dev.emanon.banking.customer.application.exception.CustomerNotFoundException;
 import dev.emanon.banking.customer.domain.Customer;
 import dev.emanon.banking.customer.repository.CustomerRepository;
@@ -32,9 +33,7 @@ public class CustomerService {
         String phone = normalizePhone(request.phone());
 
         if (customerRepository.existsByEmailIgnoreCase(email)) {
-            throw new IllegalStateException(
-                    "Customer with email already exists: " + email
-            );
+            throw new CustomerEmailAlreadyExistsException(email);
         }
 
         Customer customer = new Customer(
