@@ -1,5 +1,6 @@
 package dev.emanon.banking.customer.domain;
 
+import dev.emanon.banking.customer.domain.exception.InvalidCustomerStatusTransitionException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -69,6 +70,18 @@ public class Customer {
         this.updatedAt = now;
     }
 
+    public void updateContactInformation(
+            String firstName,
+            String lastName,
+            String email,
+            String phone
+    ) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+    }
+
     @PrePersist
     private void beforeInsert() {
         if (id == null) {
@@ -127,5 +140,43 @@ public class Customer {
 
     public long getVersion() {
         return version;
+    }
+
+    public void block() {
+        if (status == CustomerStatus.BLOCKED) {
+            return;
+        }
+
+        if (status == CustomerStatus.CLOSED) {
+            throw new InvalidCustomerStatusTransitionException(
+                    status,
+                    CustomerStatus.BLOCKED
+            );
+        }
+
+        status = CustomerStatus.BLOCKED;
+    }
+
+    public void activate() {
+        if (status == CustomerStatus.ACTIVE) {
+            return;
+        }
+
+        if (status == CustomerStatus.CLOSED) {
+            throw new InvalidCustomerStatusTransitionException(
+                    status,
+                    CustomerStatus.ACTIVE
+            );
+        }
+
+        status = CustomerStatus.ACTIVE;
+    }
+
+    public void close() {
+        if (status == CustomerStatus.CLOSED) {
+            return;
+        }
+
+        status = CustomerStatus.CLOSED;
     }
 }

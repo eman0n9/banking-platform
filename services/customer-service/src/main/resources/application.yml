@@ -2,6 +2,12 @@ spring:
   application:
     name: customer-service
 
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 100
+
   datasource:
     url: ${CUSTOMER_DB_URL:jdbc:postgresql://localhost:5433/customer_db}
     username: ${CUSTOMER_DB_USER:customer_user}
