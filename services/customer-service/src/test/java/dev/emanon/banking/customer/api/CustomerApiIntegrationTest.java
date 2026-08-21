@@ -410,4 +410,34 @@ class CustomerApiIntegrationTest {
 
         assertEquals(3, closedCustomer.getVersion());
     }
+
+    @Test
+    void shouldExposeOpenApiDocumentation() throws Exception {
+        mockMvc.perform(
+                        get("/v3/api-docs")
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_JSON
+                ))
+                .andExpect(jsonPath("$.openapi").isNotEmpty())
+                .andExpect(jsonPath("$.info.title")
+                        .value("Customer Service API"))
+                .andExpect(jsonPath("$.info.version").value("v1"))
+                .andExpect(jsonPath(
+                        "$.paths['/api/v1/customers']"
+                ).exists())
+                .andExpect(jsonPath(
+                        "$.paths['/api/v1/customers/{customerId}']"
+                ).exists())
+                .andExpect(jsonPath(
+                        "$.paths['/api/v1/customers/{customerId}/block']"
+                ).exists())
+                .andExpect(jsonPath(
+                        "$.paths['/api/v1/customers/{customerId}/activate']"
+                ).exists())
+                .andExpect(jsonPath(
+                        "$.paths['/api/v1/customers/{customerId}/close']"
+                ).exists());
+    }
 }
