@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
-@SpringBootTest
+@SpringBootTest(
+        properties = "outbox.publisher.enabled=false"
+)
 @AutoConfigureMockMvc
 @Testcontainers
 class CustomerApiIntegrationTest {

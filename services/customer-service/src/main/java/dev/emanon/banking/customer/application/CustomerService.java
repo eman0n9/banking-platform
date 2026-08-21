@@ -5,6 +5,7 @@ import dev.emanon.banking.customer.application.exception.CustomerEmailAlreadyExi
 import dev.emanon.banking.customer.application.exception.CustomerNotFoundException;
 import dev.emanon.banking.customer.application.exception.CustomerVersionConflictException;
 import dev.emanon.banking.customer.domain.Customer;
+import dev.emanon.banking.customer.infrastructure.outbox.OutboxEventWriter;
 import dev.emanon.banking.customer.repository.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +19,15 @@ import java.util.UUID;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final OutboxEventWriter outboxEventWriter;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(
+            CustomerRepository customerRepository,
+            OutboxEventWriter outboxEventWriter
+    ) {
         this.customerRepository = customerRepository;
+        this.outboxEventWriter = outboxEventWriter;
     }
-
     @Transactional
     public CustomerResponse createCustomer(CreateCustomerRequest request) {
         String firstName = request.firstName().strip();
@@ -46,7 +51,7 @@ public class CustomerService {
         );
 
         Customer savedCustomer = customerRepository.save(customer);
-
+        outboxEventWriter.saveCustomerCreated(savedCustomer);
         return CustomerResponse.from(savedCustomer);
     }
 

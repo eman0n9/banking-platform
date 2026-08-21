@@ -26,7 +26,7 @@ services:
       retries: 10
       start_period: 10s
 
-  Kafka:
+  kafka:
     image: apache/kafka:4.2.0
 
     ports:
@@ -72,12 +72,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://customer-postgres:5432/${CUSTOMER_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${CUSTOMER_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${CUSTOMER_DB_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
 
     ports:
       - "8081:8081"
 
     depends_on:
       customer-postgres:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
 
 volumes:
